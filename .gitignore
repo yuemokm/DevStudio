@@ -1,0 +1,59 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+dist-electron/
+dist-renderer/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Testing
+.coverage
+test-results/
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+*.local
+.env
+.env.*
+!.env.example
+
+# Playwright
+.playwright-mcp/
+
+# Claude
+.claude/
+
+# Screenshots / temp files
+*.png
+*.bak
+
+# Test scripts
+test-browser.mjs
+test-electron.cjs
+
+# Astro cache
+test-astro-project/.astro/

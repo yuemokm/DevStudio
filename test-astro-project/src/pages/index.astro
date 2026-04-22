@@ -1,0 +1,111 @@
+---
+const title = "Astro Test Page";
+const features = [
+  "Edit text content",
+  "Change styles (colors, typography, spacing)",
+  "Add and remove elements",
+  "Drag elements to reposition",
+];
+---
+<html lang="en" data-vid="v55"><head data-vid="v56">
+  <meta charset="UTF-8" data-vid="v58">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" data-vid="v60">
+  <title data-vid="v62">{title}</title>
+  <style data-vid="v65">
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 40px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 8px;
+    }
+    .badge {
+      display: inline-block;
+      background: #e94560;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    .feature-list {
+      list-style: none;
+      padding: 0;
+    }
+    .feature-list li {
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+      color: #555;
+    }
+    .feature-list li:last-child {
+      border-bottom: none;
+    }
+    .feature-list li::before {
+      content: "✓ ";
+      color: #10b981;
+      font-weight: bold;
+      margin-right: 8px;
+    }
+    .cta {
+      margin-top: 24px;
+      padding: 16px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .cta p {
+      margin: 0 0 12px;
+      color: #666;
+    }
+    .cta a {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    footer {
+      margin-top: 32px;
+      text-align: center;
+      color: #999;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body data-vid="v69">
+  <div class="container" data-vid="v71">
+    <h1 data-vid="v73">Astro Test Page</h1>
+    <span class="badge" data-vid="v76">Astro Framework</span>
+
+    <p data-vid="v79">Edit this Astro page using the visual editor. The frontmatter above contains variables that can be used in the template.</p>
+
+    <h2 data-vid="v82">Features to Test</h2>
+    <ul class="feature-list" data-vid="v85">
+      {features.map((f) => (
+        <li data-vid="v87">{f}</li>
+      ))}
+    </ul>
+
+    <div class="cta" data-vid="v91">
+      <p data-vid="v93">Try editing this call-to-action section.</p>
+      <a href="#" data-vid="v96">Learn more →</a>
+    </div>
+
+    <footer data-vid="v100">
+      <p data-vid="v102">Astro Test Project for Visual Editor</p>
+    </footer>
+  </div>
+
+
+</body></html>
