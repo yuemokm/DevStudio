@@ -2,11 +2,10 @@ import fs from 'fs/promises'
 import path from 'path'
 import os from 'os'
 import crypto from 'crypto'
-import { parseVueSFC, setVidCounter, getVidCounter } from '../src/parsers/vue-parser'
+import { parseVueSFC, setVidCounter } from '../src/parsers/vue-parser'
 import { parseAstroFile } from '../src/parsers/astro-parser'
 import { parseReactFile } from './react-parser'
 import { parseHTML, injectVids } from '../src/parsers/html-parser'
-import type { FileNode } from './file-manager'
 
 export interface Workspace {
   originalPath: string
@@ -114,7 +113,8 @@ export async function injectVidsToWorkspace(workspace: Workspace): Promise<void>
 
 export async function refreshWorkspaceFromOriginal(workspace: Workspace): Promise<void> {
   const { originalPath, workspacePath, framework, entryFile } = workspace
-  const originalEntryFile = entryFile.replace(workspacePath, originalPath)
+  const relEntry = path.relative(workspacePath, entryFile)
+  const originalEntryFile = path.join(originalPath, relEntry)
 
   if (framework === 'vue') {
     const vueFiles = await collectVueFiles(originalPath)
