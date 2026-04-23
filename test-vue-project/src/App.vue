@@ -8,17 +8,20 @@
 
 
 
-  <div class="app" data-vid="v28">
-    <h1 data-vid="v30">Hello Vue</h1>
-    <template v-if="show" data-vid="v33">
-      <p data-vid="v35">Conditional content</p>
+
+  <div class="app">
+    <h1>Hello Vue</h1>
+    <template v-if="show">
+      <p>Conditional content</p>
     </template>
-    <template v-for="item in items" :key="item.id" data-vid="v39">
-      <div class="item" data-vid="v41">{{ item.name }}</div>
+    <template v-for="item in items" :key="item.id">
+      <div class="item">{{ item.name }}</div>
     </template>
-    <MyComponent title="test" data-vid="v45">
-    <button @click="toggle" data-vid="v47">Toggle</button>
-  </MyComponent></div>
+    <MyComponent title="test">
+      <button @click="toggle">Toggle</button>
+    </MyComponent>
+  </div>
+
 
 
 

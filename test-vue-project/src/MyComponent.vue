@@ -1,9 +1,12 @@
 <template>
 
-  <div class="my-component" data-vid="v102">
-    <h2 data-vid="v104">{{ title }}</h2>
-    <slot data-vid="v107">
-  </slot></div>
+
+  <div class="my-component">
+    <h2>{{ title }}</h2>
+    <slot>
+    </slot>
+  </div>
+
 
 </template>
 
