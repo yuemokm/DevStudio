@@ -13,10 +13,10 @@ import { stripVids, setVidCounter } from './parsers/html-parser'
 import { parseVueSFC } from './parsers/vue-parser'
 import type { FileNode } from '../electron/file-manager'
 import { parseAstroFile } from './parsers/astro-parser'
-import { FolderOpen, Save, Undo2, Redo2, Sun, Moon, RefreshCw, Code, Loader2, AlertCircle, Box, Settings } from 'lucide-react'
+import { FolderOpen, Save, FileOutput, Undo2, Redo2, Sun, Moon, RefreshCw, Code, Loader2, AlertCircle, Box, Settings } from 'lucide-react'
 import { SettingsModal } from './panels/SettingsModal'
 function App() {
-  const { project, theme, setTheme, isLoading, error, undo, redo, history, historyIndex } = useEditorStore()
+  const { project, theme, setTheme, isLoading, error, undo, redo, history, historyIndex, hasUnsavedChanges } = useEditorStore()
   const reactOriginalSourceRef = useRef<string | null>(null)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [rightTab, setRightTab] = useState<'properties' | 'styles'>('properties')
@@ -285,6 +285,10 @@ function App() {
           <Save size={14} />
           <span className="text-[11px]">Save</span>
         </button>
+        <button onClick={handleSaveAs} className={`toolbar-btn ${theme === 'dark' ? 'text-[#999] hover:text-white hover:bg-[#383838]' : 'text-[#666] hover:text-black hover:bg-[#e6e6e6]'}`} title="Save As...">
+          <FileOutput size={14} />
+          <span className="text-[11px]">Save As</span>
+        </button>
 
         <div className={`w-px h-4 mx-1 ${theme === 'dark' ? 'bg-[#3e3e3e]' : 'bg-[#e6e6e6]'}`} />
 
@@ -309,8 +313,11 @@ function App() {
         {/* Center — Project name */}
         <div className="flex-1 flex justify-center">
           {project && (
-            <span className={`text-[11px] font-medium ${theme === 'dark' ? 'text-[#e6e6e6]' : 'text-[#333]'}`}>
+            <span className={`text-[11px] font-medium flex items-center gap-1.5 ${theme === 'dark' ? 'text-[#e6e6e6]' : 'text-[#333]'}`}>
               {project.name}
+              {hasUnsavedChanges && (
+                <span className="w-2 h-2 rounded-full bg-[#e94560]" title="Unsaved changes" />
+              )}
             </span>
           )}
         </div>
