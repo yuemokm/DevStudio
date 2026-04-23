@@ -26,6 +26,7 @@ function App() {
     const unsub = window.electronAPI.onMenuAction((action) => {
       if (action === 'open-project') handleOpenProject()
       if (action === 'save') handleSave()
+      if (action === 'save-as') handleSaveAs()
       if (action === 'undo') undo()
       if (action === 'redo') redo()
       if (action === 'toggle-theme') toggleTheme()
@@ -166,17 +167,15 @@ function App() {
       if (project.framework === 'html') {
         const cleanTree = stripVids(sourceTree)
         const html = generateHTML(cleanTree)
-        await window.electronAPI.writeFile(project.entryFile, html)
+        await window.electronAPI.writeFile(project.originalEntryFile, html)
       } else if (project.framework === 'vue') {
         const { vueFileEntries } = useEditorStore.getState()
-        // Helper to strip internal tracking attributes before generating HTML
         const stripSourceFile = (node: any): any => {
           if (node.type === 'text' || node.type === 'comment') return node
           const attrs = { ...node.attributes }
           delete attrs['data-source-file']
           return { ...node, attributes: attrs, children: node.children.map(stripSourceFile) }
         }
-        // Helper to extract root-level children belonging to a specific file
         const extractForFile = (node: any, filePath: string): any[] => {
           return (node.children || [])
             .filter((child: any) => child.attributes?.['data-source-file'] === filePath)
@@ -186,13 +185,13 @@ function App() {
           const fileChildren = extractForFile(sourceTree, entry.path)
           if (fileChildren.length === 0) continue
           const fileTree = { id: 'root', type: 'element' as const, tagName: '', attributes: {}, children: fileChildren }
-          const newSFC = generateVueSFC(entry.originalSource, fileTree, true)
+          const newSFC = generateVueSFC(entry.originalSource, fileTree, false) // keepVids=false
           await window.electronAPI.writeFile(entry.path, newSFC)
         }
       } else if (project.framework === 'astro') {
-        const originalAstro = await window.electronAPI.readFile(project.entryFile)
-        const newAstro = generateAstro(originalAstro, sourceTree, true) // keep vids for continuous editing
-        await window.electronAPI.writeFile(project.entryFile, newAstro)
+        const originalAstro = await window.electronAPI.readFile(project.originalEntryFile)
+        const newAstro = generateAstro(originalAstro, sourceTree, false) // keepVids=false
+        await window.electronAPI.writeFile(project.originalEntryFile, newAstro)
       } else if (project.framework === 'react') {
         const originalSource = reactOriginalSourceRef.current
         if (!originalSource) {
@@ -200,15 +199,66 @@ function App() {
           return
         }
         const newSource = replaceJSXInSource(originalSource, sourceTree)
-        await window.electronAPI.writeFile(project.entryFile, newSource)
-        // Re-parse to update source ranges for continuous editing
-        const { tree: newTree, modifiedSource } = await window.electronAPI.parseReactFile(project.entryFile)
-        reactOriginalSourceRef.current = newSource
-        useEditorStore.getState().setSourceTree(newTree)
-        await window.electronAPI.writeFile(project.entryFile, modifiedSource)
+        await window.electronAPI.writeFile(project.originalEntryFile, newSource)
       }
+
+      // Mark as saved
+      useEditorStore.getState().markSaved()
+
+      // Refresh workspace copy from the newly saved originals
+      await window.electronAPI.refreshWorkspace({
+        originalPath: project.path,
+        workspacePath: project.workspacePath,
+        framework: project.framework,
+        entryFile: project.entryFile,
+      })
     } catch (err) {
       console.error('Save failed:', err)
+      useEditorStore.getState().setError('Save failed: ' + String(err))
+    }
+  }
+
+  const handleSaveAs = async () => {
+    if (!window.electronAPI) return
+    const { project, sourceTree } = useEditorStore.getState()
+    if (!project || !sourceTree) return
+
+    const targetPath = await window.electronAPI.saveAsDialog(project.path)
+    if (!targetPath) return
+
+    try {
+      // Generate clean code (same logic as Save)
+      if (project.framework === 'html') {
+        const cleanTree = stripVids(sourceTree)
+        const html = generateHTML(cleanTree)
+        await window.electronAPI.writeFile(targetPath, html)
+      } else if (project.framework === 'vue') {
+        useEditorStore.getState().setError('Save As for Vue projects is not yet fully supported. Use Save instead.')
+        return
+      } else if (project.framework === 'astro') {
+        const originalAstro = await window.electronAPI.readFile(project.originalEntryFile)
+        const newAstro = generateAstro(originalAstro, sourceTree, false)
+        await window.electronAPI.writeFile(targetPath, newAstro)
+      } else if (project.framework === 'react') {
+        const originalSource = reactOriginalSourceRef.current
+        if (!originalSource) {
+          useEditorStore.getState().setError('Cannot save: original source not available')
+          return
+        }
+        const newSource = replaceJSXInSource(originalSource, sourceTree)
+        await window.electronAPI.writeFile(targetPath, newSource)
+      }
+
+      // Switch project to new location
+      useEditorStore.getState().setProject({
+        ...project,
+        path: targetPath,
+        originalEntryFile: targetPath,
+      })
+      useEditorStore.getState().markSaved()
+    } catch (err) {
+      console.error('Save As failed:', err)
+      useEditorStore.getState().setError('Save As failed: ' + String(err))
     }
   }
 
