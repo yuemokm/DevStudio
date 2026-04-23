@@ -3,6 +3,8 @@ import path from 'path'
 import { openProject, readFile, writeFile, getFileTree, selectImageFile } from './file-manager'
 import { startDevServer, stopDevServer } from './dev-server'
 import { parseReactFile } from './react-parser'
+import { createWorkspace, injectVidsToWorkspace, refreshWorkspaceFromOriginal, cleanupWorkspace, cleanupAllWorkspaces, type Workspace } from './workspace-manager'
+import { saveAsDialog } from './file-manager'
 
 let mainWindow: BrowserWindow | null = null
 
@@ -155,6 +157,24 @@ ipcMain.handle('parse-react-file', async (_event, filePath: string) => {
   return result
 })
 
+ipcMain.handle('create-workspace', async (_event, projectPath: string, framework: string, entryFile: string) => {
+  const workspace = await createWorkspace(projectPath, framework, entryFile)
+  await injectVidsToWorkspace(workspace)
+  return workspace
+})
+
+ipcMain.handle('refresh-workspace', async (_event, workspace: Workspace) => {
+  await refreshWorkspaceFromOriginal(workspace)
+})
+
+ipcMain.handle('cleanup-workspace', async (_event, workspace: Workspace) => {
+  await cleanupWorkspace(workspace)
+})
+
+ipcMain.handle('save-as-dialog', async (_event, defaultPath: string) => {
+  return saveAsDialog(defaultPath)
+})
+
 ipcMain.handle('inject-overlay-script', async (_event, script: string, frameUrl: string) => {
   if (!mainWindow) return { success: false, error: 'no mainWindow' }
   try {
@@ -189,7 +209,8 @@ ipcMain.on('quit-app', () => {
 app.whenReady().then(createWindow)
 
 app.on('window-all-closed', () => {
-  stopDevServer().then(() => {
+  stopDevServer().then(async () => {
+    await cleanupAllWorkspaces()
     if (process.platform !== 'darwin') app.quit()
   })
 })

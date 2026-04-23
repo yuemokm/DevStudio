@@ -14,6 +14,10 @@ export interface ElectronAPI {
   reload: () => void
   toggleDevTools: () => void
   quitApp: () => void
+  createWorkspace: (projectPath: string, framework: string, entryFile: string) => Promise<{ originalPath: string; workspacePath: string; framework: string; entryFile: string }>
+  refreshWorkspace: (workspace: { originalPath: string; workspacePath: string; framework: string; entryFile: string }) => Promise<void>
+  cleanupWorkspace: (workspace: { originalPath: string; workspacePath: string; framework: string; entryFile: string }) => Promise<void>
+  saveAsDialog: (defaultPath: string) => Promise<string | null>
 }
 
 const api: ElectronAPI = {
@@ -34,6 +38,10 @@ const api: ElectronAPI = {
   reload: () => ipcRenderer.send('reload-window'),
   toggleDevTools: () => ipcRenderer.send('toggle-devtools'),
   quitApp: () => ipcRenderer.send('quit-app'),
+  createWorkspace: (projectPath: string, framework: string, entryFile: string) => ipcRenderer.invoke('create-workspace', projectPath, framework, entryFile),
+  refreshWorkspace: (workspace: any) => ipcRenderer.invoke('refresh-workspace', workspace),
+  cleanupWorkspace: (workspace: any) => ipcRenderer.invoke('cleanup-workspace', workspace),
+  saveAsDialog: (defaultPath: string) => ipcRenderer.invoke('save-as-dialog', defaultPath),
 }
 
 contextBridge.exposeInMainWorld('electronAPI', api)

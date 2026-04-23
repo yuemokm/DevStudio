@@ -2,6 +2,8 @@ import { parse as parseSFC } from '@vue/compiler-sfc'
 import { parseHTMLFragment, injectVids, setVidCounter } from './html-parser'
 import type { SourceNode } from '../types'
 
+export { setVidCounter }
+
 export function parseVueSFC(source: string, options?: { resetVidCounter?: boolean }): { sourceTree: SourceNode; modifiedSFC: string } {
   if (options?.resetVidCounter !== false) {
     setVidCounter(0)

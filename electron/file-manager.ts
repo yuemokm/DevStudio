@@ -52,6 +52,16 @@ export async function selectImageFile(projectPath: string): Promise<string | nul
   return relativePath
 }
 
+export async function saveAsDialog(defaultPath: string): Promise<string | null> {
+  const result = await dialog.showSaveDialog({
+    defaultPath,
+    title: 'Save As',
+    properties: ['createDirectory'],
+  })
+  if (result.canceled || !result.filePath) return null
+  return result.filePath
+}
+
 export async function getFileTree(dirPath: string): Promise<FileNode[]> {
   const entries = await fs.readdir(dirPath, { withFileTypes: true })
   const nodes: FileNode[] = []
