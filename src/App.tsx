@@ -50,16 +50,26 @@ function App() {
         return
       }
 
-      console.log('[App] setting project:', result.framework, result.entryFile)
+      // Create workspace copy and inject vids
+      const workspace = await window.electronAPI.createWorkspace(
+        result.path,
+        result.framework,
+        result.entryFile
+      )
+      console.log('[App] workspace created:', workspace.workspacePath)
+
+      // Set project with both original and workspace paths
       useEditorStore.getState().setProject({
         path: result.path,
+        workspacePath: workspace.workspacePath,
         name: result.name,
-        entryFile: result.entryFile,
+        entryFile: workspace.entryFile,           // points to workspace copy
+        originalEntryFile: result.entryFile,      // points to original source
         files: result.files,
         framework: result.framework as any,
       })
 
-      // For Vue projects: parse all SFCs, inject vids into every template, write back before dev server starts
+      // Parse workspace files into AST (memory only, no disk writes)
       if (result.framework === 'vue') {
         function collectVueFiles(nodes: FileNode[]): string[] {
           const out: string[] = []
@@ -71,9 +81,12 @@ function App() {
         }
         const vueFiles = collectVueFiles(result.files)
 
-        // Scan existing vids across all files to avoid collisions
+        // Map original file paths to workspace paths
+        const workspaceVueFiles = vueFiles.map(f => f.replace(result.path, workspace.workspacePath))
+
+        // Scan existing vids in workspace files to set counter
         let maxVid = 0
-        for (const file of vueFiles) {
+        for (const file of workspaceVueFiles) {
           const content = await window.electronAPI.readFile(file)
           const vids = content.match(/data-vid="v(\d+)"/g)
           if (vids) {
@@ -88,17 +101,20 @@ function App() {
         const fileEntries: { path: string; originalSource: string }[] = []
         const allTrees: { tree: any; file: string }[] = []
 
-        for (const file of vueFiles) {
-          const content = await window.electronAPI.readFile(file)
-          const { sourceTree: tree, modifiedSFC } = parseVueSFC(content, { resetVidCounter: false })
-          await window.electronAPI.writeFile(file, modifiedSFC)
-          fileEntries.push({ path: file, originalSource: content })
-          allTrees.push({ tree, file })
+        for (let i = 0; i < vueFiles.length; i++) {
+          const originalFile = vueFiles[i]
+          const workspaceFile = workspaceVueFiles[i]
+          // Parse workspace copy (has vids) to build AST
+          const workspaceContent = await window.electronAPI.readFile(workspaceFile)
+          const { sourceTree: tree } = parseVueSFC(workspaceContent, { resetVidCounter: false })
+          // Keep original source for Save
+          const originalContent = await window.electronAPI.readFile(originalFile)
+          fileEntries.push({ path: originalFile, originalSource: originalContent })
+          allTrees.push({ tree, file: originalFile })
         }
 
         useEditorStore.getState().setVueFileEntries(fileEntries)
 
-        // Merge all file trees into a single root so ComponentTree can show every element
         const rootNode = {
           id: `v${maxVid + 1}`,
           type: 'element' as const,
@@ -114,30 +130,28 @@ function App() {
         useEditorStore.getState().setSourceTree(rootNode)
       }
 
-      // For React projects: parse JSX, inject vids, write back before dev server starts
       if (result.framework === 'react') {
         const originalSource = await window.electronAPI.readFile(result.entryFile)
-        const { tree, modifiedSource } = await window.electronAPI.parseReactFile(result.entryFile)
+        // Parse the workspace copy (already has vids injected)
+        const { tree } = await window.electronAPI.parseReactFile(workspace.entryFile)
         reactOriginalSourceRef.current = originalSource
         useEditorStore.getState().setSourceTree(tree)
-        await window.electronAPI.writeFile(result.entryFile, modifiedSource)
       }
 
-      // For Astro projects: parse template, inject vids, write back before dev server starts
       if (result.framework === 'astro') {
-        const astroContent = await window.electronAPI.readFile(result.entryFile)
-        const { sourceTree, modifiedAstro } = parseAstroFile(astroContent)
+        // Parse the workspace copy (has vids)
+        const workspaceAstro = await window.electronAPI.readFile(workspace.entryFile)
+        const { sourceTree } = parseAstroFile(workspaceAstro)
         useEditorStore.getState().setSourceTree(sourceTree)
-        await window.electronAPI.writeFile(result.entryFile, modifiedAstro)
       }
 
-      console.log('[App] starting dev server for', result.framework)
-      const { url } = await window.electronAPI.startDevServer(result.path, result.framework)
+      // Start dev server from WORKSPACE path, not original path
+      console.log('[App] starting dev server for', result.framework, 'at workspace:', workspace.workspacePath)
+      const { url } = await window.electronAPI.startDevServer(workspace.workspacePath, result.framework)
       console.log('[App] dev server started at', url)
       useEditorStore.getState().setPreviewUrl(url)
     } catch (err: any) {
       console.error('[App] open project error:', err)
-      console.error('Open project failed:', err)
       useEditorStore.getState().setError(String(err?.message || err || 'Failed to open project'))
     } finally {
       useEditorStore.getState().setLoading(false)
