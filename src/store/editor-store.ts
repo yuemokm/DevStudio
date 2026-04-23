@@ -19,6 +19,8 @@ interface EditorState {
   historyIndex: number
   theme: 'dark' | 'light'
   vueFileEntries: VueFileEntry[]
+  hasUnsavedChanges: boolean
+  markSaved: () => void
 
   setProject: (project: Project | null) => void
   setSourceTree: (tree: SourceNode | null) => void
@@ -47,9 +49,10 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   historyIndex: -1,
   theme: 'dark',
   vueFileEntries: [],
+  hasUnsavedChanges: false,
 
-  setProject: (project) => set({ project, selectedVid: null, selectedElement: null, vueFileEntries: [] }),
-  setSourceTree: (tree) => set({ sourceTree: tree }),
+  setProject: (project) => set({ project, selectedVid: null, selectedElement: null, vueFileEntries: [], hasUnsavedChanges: false }),
+  setSourceTree: (tree) => set({ sourceTree: tree, hasUnsavedChanges: true }),
   selectElement: (vid, element) => set({ selectedVid: vid, selectedElement: element ?? null }),
   setPreviewUrl: (url) => set({ previewUrl: url }),
   setLoading: (loading) => set({ isLoading: loading }),
@@ -99,18 +102,20 @@ export const useEditorStore = create<EditorState>((set, get) => ({
 
   setTheme: (theme) => set({ theme }),
 
+  markSaved: () => set({ hasUnsavedChanges: false }),
+
   removeNode: (vid) => {
     const { sourceTree } = get()
     if (!sourceTree) return
     const newTree = removeNodeByVid(sourceTree, vid)
     if (newTree) {
-      set({ sourceTree: newTree, selectedVid: null, selectedElement: null })
+      set({ sourceTree: newTree, selectedVid: null, selectedElement: null, hasUnsavedChanges: true })
     }
   },
 
   addChild: (parentVid, child) => {
     const { sourceTree } = get()
     if (!sourceTree) return
-    set({ sourceTree: addChildNode(sourceTree, parentVid, child) })
+    set({ sourceTree: addChildNode(sourceTree, parentVid, child), hasUnsavedChanges: true })
   },
 }))

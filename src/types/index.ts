@@ -6,9 +6,11 @@ export interface ProjectFile {
 }
 
 export interface Project {
-  path: string
+  path: string              // Original source directory (Save target)
+  workspacePath: string     // Temp directory (dev server root)
   name: string
-  entryFile: string
+  entryFile: string         // Absolute path within workspacePath
+  originalEntryFile: string // Absolute path within path (for Save)
   files: ProjectFile[]
   framework: 'html' | 'vue' | 'react' | 'astro'
 }
