@@ -1,11 +1,5 @@
 # DevStudio
 
-> **中文：** 本作品是作者的 vibe coding 练习作。
-> **English:** This project is the author's vibe coding practice work.
-
-> **中文：** 本项目已改名为 **DevStudio**。
-> **English:** This project has been renamed to **DevStudio**.
-
 ---
 
 A visual editor for HTML, Vue, React, and Astro projects.
@@ -30,7 +24,7 @@ Open any frontend project, edit it visually, and see changes in real time.
 
 Get the latest release:
 
-- [DevStudio Setup 0.1.0.exe](https://github.com/yuemokm/lumen-editor/releases/download/v0.1.0/DevStudio%20Setup%200.1.0.exe) — Windows installer
+- [DevStudio Setup 0.1.0.exe](https://https://github.com/yuemokm/DevStudio/releases/download/v0.1.0/DevStudio%20Setup%200.1.0.exe) — Windows installer
 
 ---
 
@@ -45,8 +39,8 @@ Get the latest release:
 
 ```bash
 # Clone the repo
-git clone https://github.com/yuemokm/lumen-editor.git
-cd lumen-editor
+git clone https://github.com/yuemokm/DevStudio.git
+cd DevStudio
 
 # Install dependencies
 npm install
@@ -132,6 +126,8 @@ test-*-project/           # Sample projects for testing
 | React | `vite.config.ts` + `.tsx` files | TSX/JSX editing with VID injection |
 | Astro | `astro.config.mjs` | Frontmatter preserved, template editing |
 
+该作品为本人练习作品
+This project is the author's vibe coding practice work.
 ---
 
 ## License
