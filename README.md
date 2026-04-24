@@ -1,10 +1,10 @@
-# Lumen
+# DevStudio
 
 > **中文：** 本作品是作者的 vibe coding 练习作。
 > **English:** This project is the author's vibe coding practice work.
 
-> **中文：** 本项目已改名为 **Lumen**。
-> **English:** This project has been renamed to **Lumen**.
+> **中文：** 本项目已改名为 **DevStudio**。
+> **English:** This project has been renamed to **DevStudio**.
 
 ---
 
@@ -30,7 +30,7 @@ Open any frontend project, edit it visually, and see changes in real time.
 
 Get the latest release:
 
-- [Lumen Setup 0.1.0.exe](https://github.com/yuemokm/lumen-editor/releases/download/v0.1.0/Lumen%20Setup%200.1.0.exe) — Windows installer
+- [DevStudio Setup 0.1.0.exe](https://github.com/yuemokm/lumen-editor/releases/download/v0.1.0/DevStudio%20Setup%200.1.0.exe) — Windows installer
 
 ---
 
