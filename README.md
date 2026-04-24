@@ -1,5 +1,13 @@
 # Lumen
 
+> **中文：** 本作品是作者的 vibe coding 练习作。
+> **English:** This project is the author's vibe coding practice work.
+
+> **中文：** 本项目已改名为 **Lumen**。
+> **English:** This project has been renamed to **Lumen**.
+
+---
+
 A visual editor for HTML, Vue, React, and Astro projects.
 
 Open any frontend project, edit it visually, and see changes in real time.
