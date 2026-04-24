@@ -127,6 +127,7 @@ test-*-project/           # Sample projects for testing
 | Astro | `astro.config.mjs` | Frontmatter preserved, template editing |
 
 该作品为本人练习作品
+
 This project is the author's vibe coding practice work.
 ---
 
