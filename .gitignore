@@ -57,3 +57,6 @@ test-electron.cjs
 
 # Astro cache
 test-astro-project/.astro/
+
+# Worktrees
+.worktrees/
