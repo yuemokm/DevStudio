@@ -1,11 +1,5 @@
 # Lumen
 
-> **中文：** 本作品是作者的 vibe coding 练习作。
-> **English:** This project is the author's vibe coding practice work.
-
-> **中文：** 本项目已改名为 **Lumen**。
-> **English:** This project has been renamed to **Lumen**.
-
 ---
 
 A visual editor for HTML, Vue, React, and Astro projects.
@@ -131,6 +125,8 @@ test-*-project/           # Sample projects for testing
 | Vue | `vite.config.ts` + `.vue` files | SFC template editing |
 | React | `vite.config.ts` + `.tsx` files | TSX/JSX editing with VID injection |
 | Astro | `astro.config.mjs` | Frontmatter preserved, template editing |
+>  本作品是作者的 vibe coding 练习作。
+>  This project is the author's vibe coding practice work.
 
 ---
 
