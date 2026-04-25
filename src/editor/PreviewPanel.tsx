@@ -172,6 +172,7 @@ function getOverlayScript(isEditable: boolean) {
       // --- Click to select ---
       document.addEventListener('click', function(e) {
         if (isDragging) return;
+        if (e.target.closest('#__resize-handles')) return;
         const target = getTarget(e);
         if (!target) {
           if (selectedEl) {
