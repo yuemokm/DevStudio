@@ -573,6 +573,19 @@ export function PreviewPanel() {
           setSourceTree(updateNodeAttr(sourceTree, vid, 'style', newStyleString))
           executeCommand({ type: 'style', vid, property: '', prev: currentStyle, next: newStyleString })
         }
+      } else if (type === 'delete-request') {
+        const { removeNode } = useEditorStore.getState()
+        if (vid) {
+          removeNode(vid)
+          // Also tell the iframe to remove the element from the live DOM
+          const iframe = iframeRef.current
+          if (iframe?.contentWindow) {
+            iframe.contentWindow.postMessage(
+              { source: 'edit-bridge', type: 'remove', vid },
+              '*'
+            )
+          }
+        }
       }
     }
 
@@ -641,6 +654,27 @@ export function PreviewPanel() {
     }, 2000)
     return () => clearInterval(interval)
   }, [project, injectOverlay])
+
+  // External Delete key handler (when iframe is not focused)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Delete') {
+        const { selectedVid, removeNode } = useEditorStore.getState()
+        if (selectedVid) {
+          removeNode(selectedVid)
+          const iframe = iframeRef.current
+          if (iframe?.contentWindow) {
+            iframe.contentWindow.postMessage(
+              { source: 'edit-bridge', type: 'remove', vid: selectedVid },
+              '*'
+            )
+          }
+        }
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   if (!previewUrl) {
     return (
