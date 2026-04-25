@@ -1,7 +1,7 @@
 {
-  "name": "lumen",
+  "name": "devstudio",
   "version": "0.1.0",
-  "description": "Lumen — A visual editor for HTML, Vue, React, and Astro projects",
+  "description": "DevStudio — A visual editor for HTML, Vue, React, and Astro projects",
   "main": "dist-electron/main.js",
   "scripts": {
     "dev": "npm run build:electron && concurrently \"npm run dev:renderer\" \"wait-on http://localhost:5173 && electron . --dev\"",
@@ -38,6 +38,47 @@
     "typescript": "^5.8.3",
     "vite": "^6.3.3",
     "wait-on": "^8.0.3"
+  },
+  "build": {
+    "appId": "com.yuemokm.devstudio",
+    "productName": "DevStudio",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist-renderer",
+      "dist-electron",
+      "package.json"
+    ],
+    "asar": true,
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        },
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ],
+      "forceCodeSigning": false,
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["x64", "arm64"]
+        }
+      ]
+    }
   },
   "keywords": [
     "electron",
