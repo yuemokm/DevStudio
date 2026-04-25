@@ -27,6 +27,16 @@ function getOverlayScript(isEditable: boolean) {
       let currentTranslateY = 0;
       let dragVid = '';
 
+      // Resize handle state
+      let isResizing = false;
+      let resizeDir = '';
+      let resizeStartX = 0;
+      let resizeStartY = 0;
+      let resizeStartWidth = 0;
+      let resizeStartHeight = 0;
+      let resizeStartTranslateX = 0;
+      let resizeStartTranslateY = 0;
+
       function getVid(el) {
         return el?.getAttribute?.('data-vid') || getPath(el);
       }
@@ -76,6 +86,66 @@ function getOverlayScript(isEditable: boolean) {
         el.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
       }
 
+      const HANDLE_SIZE = 8;
+
+      function createResizeHandles(el) {
+        removeResizeHandles();
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const container = document.createElement('div');
+        container.id = '__resize-handles';
+        container.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10000;';
+
+        const positions = [
+          { dir: 'nw', x: rect.left - HANDLE_SIZE/2, y: rect.top - HANDLE_SIZE/2, cursor: 'nw-resize' },
+          { dir: 'n', x: rect.left + rect.width/2 - HANDLE_SIZE/2, y: rect.top - HANDLE_SIZE/2, cursor: 'n-resize' },
+          { dir: 'ne', x: rect.right - HANDLE_SIZE/2, y: rect.top - HANDLE_SIZE/2, cursor: 'ne-resize' },
+          { dir: 'w', x: rect.left - HANDLE_SIZE/2, y: rect.top + rect.height/2 - HANDLE_SIZE/2, cursor: 'w-resize' },
+          { dir: 'e', x: rect.right - HANDLE_SIZE/2, y: rect.top + rect.height/2 - HANDLE_SIZE/2, cursor: 'e-resize' },
+          { dir: 'sw', x: rect.left - HANDLE_SIZE/2, y: rect.bottom - HANDLE_SIZE/2, cursor: 'sw-resize' },
+          { dir: 's', x: rect.left + rect.width/2 - HANDLE_SIZE/2, y: rect.bottom - HANDLE_SIZE/2, cursor: 's-resize' },
+          { dir: 'se', x: rect.right - HANDLE_SIZE/2, y: rect.bottom - HANDLE_SIZE/2, cursor: 'se-resize' },
+        ];
+
+        positions.forEach(function(p) {
+          const handle = document.createElement('div');
+          handle.style.cssText = 'position:absolute;left:' + p.x + 'px;top:' + p.y + 'px;width:' + HANDLE_SIZE + 'px;height:' + HANDLE_SIZE + 'px;background:#e94560;border:1px solid white;border-radius:1px;pointer-events:auto;cursor:' + p.cursor + ';';
+          handle.dataset.dir = p.dir;
+
+          handle.addEventListener('mousedown', function(e) {
+            if (!isEditable) return;
+            isResizing = true;
+            resizeDir = p.dir;
+            resizeStartX = e.clientX;
+            resizeStartY = e.clientY;
+            resizeStartWidth = selectedEl.offsetWidth;
+            resizeStartHeight = selectedEl.offsetHeight;
+            const t = getTranslate(selectedEl);
+            resizeStartTranslateX = t.x;
+            resizeStartTranslateY = t.y;
+            e.preventDefault();
+            e.stopPropagation();
+          });
+
+          container.appendChild(handle);
+        });
+
+        document.body.appendChild(container);
+      }
+
+      function removeResizeHandles() {
+        const existing = document.getElementById('__resize-handles');
+        if (existing) existing.remove();
+      }
+
+      function updateResizeHandles() {
+        if (!selectedEl) {
+          removeResizeHandles();
+          return;
+        }
+        createResizeHandles(selectedEl);
+      }
+
       // --- Hover ---
       document.addEventListener('mouseover', function(e) {
         if (isDragging) return;
@@ -108,6 +178,7 @@ function getOverlayScript(isEditable: boolean) {
             clearOutline(selectedEl);
             selectedEl.style.cursor = '';
           }
+          removeResizeHandles();
           selectedEl = null;
           send('unselect', '');
           return;
@@ -121,6 +192,7 @@ function getOverlayScript(isEditable: boolean) {
         selectedEl = target;
         outline(selectedEl, '#e94560', 3);
         selectedEl.style.cursor = 'move';
+        createResizeHandles(selectedEl);
         const t = getTranslate(selectedEl);
         currentTranslateX = t.x;
         currentTranslateY = t.y;
@@ -226,6 +298,7 @@ function getOverlayScript(isEditable: boolean) {
             currentTranslateX = t.x;
             currentTranslateY = t.y;
           }
+          if (el === selectedEl) updateResizeHandles();
         } else if (type === 'set-style') {
           el.style[payload.property] = payload.value;
           // If setting transform, update drag state
@@ -234,6 +307,7 @@ function getOverlayScript(isEditable: boolean) {
             currentTranslateX = t.x;
             currentTranslateY = t.y;
           }
+          if (el === selectedEl) updateResizeHandles();
         } else if (type === 'highlight') {
           if (selectedEl) clearOutline(selectedEl);
           selectedEl = el;
@@ -268,6 +342,9 @@ function getOverlayScript(isEditable: boolean) {
           }
         }
       });
+
+      window.addEventListener('scroll', updateResizeHandles, true);
+      window.addEventListener('resize', updateResizeHandles);
 
       send('ready', '');
     })();
