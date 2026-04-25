@@ -27,10 +27,16 @@
 - **拖拽重排**：直接在组件树中重新排列元素
 - **图片替换**：用本地文件替换图片源
 
-## 安装
+## 截图
 
-1. 从 [Releases](https://github.com/yuemokm/DevStudio/releases) 页面下载最新版本。
-2. 运行 `DevStudio Setup 0.1.0.exe` 进行安装，或使用 `DevStudio 0.1.0.exe` 便携版。
+<!-- TODO: 在此添加截图或 GIF -->
+
+## 快速开始
+
+1. 从 [最新发布](https://github.com/yuemokm/DevStudio/releases/latest) 下载并安装。
+2. 启动 DevStudio，点击 **打开项目**。
+3. 选择任意前端项目文件夹（HTML、Vue、React 或 Astro）。
+4. 在预览面板中点击元素即可开始编辑。
 
 ## 开发
 
@@ -113,8 +119,6 @@ npx electron-builder
 │       └── index.ts          # 共享 TypeScript 类型
 ├── public/                   # 静态资源
 ├── package.json
-├── README.md
-├── README.zh-CN.md
 └── LICENSE
 ```
 
@@ -126,6 +130,15 @@ npx electron-builder
 | Vue | `vite.config.ts` + `.vue` 文件 | SFC 模板编辑 |
 | React | `vite.config.ts` + `.tsx` 文件 | 带 VID 注入的 TSX/JSX 编辑 |
 | Astro | `astro.config.mjs` | 保留 frontmatter，模板编辑 |
+
+## 文档
+
+- [架构决策记录](./docs/adr/)
+- [实现计划与设计规范](./docs/superpowers/)
+
+## 贡献
+
+欢迎提交贡献。请在 [GitHub](https://github.com/yuemokm/DevStudio) 上提交 issue 或 pull request。
 
 ## 许可证
 

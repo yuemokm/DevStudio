@@ -27,10 +27,16 @@ A visual editor for HTML, Vue, React, and Astro projects.
 - **Drag to reorder**: Rearrange elements directly in the component tree
 - **Image replacement**: Swap image sources with local files
 
-## Installation
+## Screenshots
 
-1. Download the latest release from the [Releases](https://github.com/yuemokm/DevStudio/releases) page.
-2. Run `DevStudio Setup 0.1.0.exe` to install, or use `DevStudio 0.1.0.exe` for portable mode.
+<!-- TODO: Add screenshots or GIFs here -->
+
+## Quick Start
+
+1. Download and install from the [latest release](https://github.com/yuemokm/DevStudio/releases/latest).
+2. Launch DevStudio and click **Open Project**.
+3. Select any frontend project folder (HTML, Vue, React, or Astro).
+4. Click an element in the preview panel to start editing.
 
 ## Development
 
@@ -113,8 +119,6 @@ Build artifacts will be placed in `release/`.
 │       └── index.ts          # Shared TypeScript types
 ├── public/                   # Static assets
 ├── package.json
-├── README.md
-├── README.zh-CN.md
 └── LICENSE
 ```
 
@@ -126,6 +130,15 @@ Build artifacts will be placed in `release/`.
 | Vue | `vite.config.ts` + `.vue` files | SFC template editing |
 | React | `vite.config.ts` + `.tsx` files | TSX/JSX editing with VID injection |
 | Astro | `astro.config.mjs` | Frontmatter preserved, template editing |
+
+## Documentation
+
+- [Architecture Decision Records](./docs/adr/)
+- [Implementation Plans & Design Specs](./docs/superpowers/)
+
+## Contributing
+
+Contributions are welcome. Please open an issue or submit a pull request on [GitHub](https://github.com/yuemokm/DevStudio).
 
 ## License
 
