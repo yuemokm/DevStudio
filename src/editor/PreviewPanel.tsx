@@ -226,6 +226,39 @@ function getOverlayScript(isEditable: boolean) {
       }, true);
 
       document.addEventListener('mousemove', function(e) {
+        if (isResizing && selectedEl) {
+          const dx = e.clientX - resizeStartX;
+          const dy = e.clientY - resizeStartY;
+
+          let newWidth = resizeStartWidth;
+          let newHeight = resizeStartHeight;
+          let newTranslateX = resizeStartTranslateX;
+          let newTranslateY = resizeStartTranslateY;
+
+          if (resizeDir.indexOf('e') >= 0) newWidth = resizeStartWidth + dx;
+          if (resizeDir.indexOf('w') >= 0) {
+            newWidth = resizeStartWidth - dx;
+            newTranslateX = resizeStartTranslateX + dx;
+          }
+          if (resizeDir.indexOf('s') >= 0) newHeight = resizeStartHeight + dy;
+          if (resizeDir.indexOf('n') >= 0) {
+            newHeight = resizeStartHeight - dy;
+            newTranslateY = resizeStartTranslateY + dy;
+          }
+
+          if (newWidth < 10) newWidth = 10;
+          if (newHeight < 10) newHeight = 10;
+
+          selectedEl.style.width = newWidth + 'px';
+          selectedEl.style.height = newHeight + 'px';
+          setTranslate(selectedEl, newTranslateX, newTranslateY);
+          updateResizeHandles();
+
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
+
         if (!isDragging || !selectedEl) return;
         const dx = e.clientX - dragStartX;
         const dy = e.clientY - dragStartY;
@@ -242,6 +275,25 @@ function getOverlayScript(isEditable: boolean) {
       }, true);
 
       document.addEventListener('mouseup', function(e) {
+        if (isResizing && selectedEl) {
+          isResizing = false;
+          send('style-change', dragVid, {
+            property: 'width',
+            value: selectedEl.style.width
+          });
+          send('style-change', dragVid, {
+            property: 'height',
+            value: selectedEl.style.height
+          });
+          send('style-change', dragVid, {
+            property: 'transform',
+            value: selectedEl.style.transform
+          });
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
+
         if (!isDragging || !selectedEl) return;
         isDragging = false;
         selectedEl.style.transition = '';
