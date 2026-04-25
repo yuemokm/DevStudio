@@ -78,7 +78,7 @@ export function getWorkspaceForProject(projectPath: string): Workspace | undefin
 
 ### createWorkspace
 
-1. Generate a unique temp directory: `os.tmpdir() + '/lumen-workspace/' + projectName + '-' + hash`
+1. Generate a unique temp directory: `os.tmpdir() + '/devstudio-workspace/' + projectName + '-' + hash`
 2. Recursively copy the entire project directory to the temp path
    - **Exclude**: `node_modules/`, `.git/`, `dist/`, `build/`, `.claude/`, and any dot-prefixed directories
    - On Windows, use `fs.cp(source, dest, { recursive: true, filter })` (Node 18+) or custom recursive copy with filter
