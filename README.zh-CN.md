@@ -2,7 +2,7 @@
 
 一款面向 HTML、Vue、React 和 Astro 项目的可视化编辑器。
 
-[English](/yuemokm/DevStudio/blob/main/README.md) | **中文**
+[English](./README.md) | **中文**
 
 ![Electron](https://img.shields.io/badge/Electron-35-47848F?logo=electron)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)

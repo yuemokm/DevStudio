@@ -2,7 +2,7 @@
 
 A visual editor for HTML, Vue, React, and Astro projects.
 
-**English** | [中文](/yuemokm/DevStudio/blob/main/README.zh-CN.md)
+**English** | [中文](./README.zh-CN.md)
 
 ![Electron](https://img.shields.io/badge/Electron-35-47848F?logo=electron)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)
