@@ -55,7 +55,7 @@ export async function createWorkspace(
 ): Promise<Workspace> {
   const projectName = path.basename(projectPath)
   const hash = crypto.randomBytes(4).toString('hex')
-  const workspacePath = path.join(os.tmpdir(), 'lumen-workspace', `${projectName}-${hash}`)
+  const workspacePath = path.join(os.tmpdir(), 'devstudio-workspace', `${projectName}-${hash}`)
 
   await copyDir(projectPath, workspacePath)
 
