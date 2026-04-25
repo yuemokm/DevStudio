@@ -1,7 +1,5 @@
 # DevStudio
 
----
-
 A visual editor for HTML, Vue, React, and Astro projects.
 
 Open any frontend project, edit it visually, and see changes in real time.
@@ -12,6 +10,10 @@ Open any frontend project, edit it visually, and see changes in real time.
 
 - **Multi-framework support** — Works with HTML, Vue (SFC), React (JSX/TSX), and Astro
 - **Visual editing** — Select elements in the preview, edit text, styles, attributes, and classes
+- **Resize handles** — Drag 8-direction handles to resize elements directly in the preview
+- **Delete elements** — Press the Delete key to remove selected elements
+- **Drag to move** — Reposition elements in the preview with drag-and-drop
+- **Keyboard nudge** — Fine-tune element position with arrow keys
 - **Component tree** — Browse and manipulate the DOM structure
 - **Undo / Redo** — Full command history with Zustand
 - **Dev server integration** — Automatically detects framework and spins up the appropriate dev server
@@ -24,7 +26,8 @@ Open any frontend project, edit it visually, and see changes in real time.
 
 Get the latest release:
 
-- [DevStudio Setup 0.1.0.exe](https://https://github.com/yuemokm/DevStudio/releases/download/v0.1.0/DevStudio%20Setup%200.1.0.exe) — Windows installer
+- [DevStudio Setup 0.1.0.exe](https://github.com/yuemokm/DevStudio/releases/download/v0.1.0/DevStudio%20Setup%200.1.0.exe) — Windows installer
+- [DevStudio 0.1.0.exe](https://github.com/yuemokm/DevStudio/releases/download/v0.1.0/DevStudio%200.1.0.exe) — Portable (no installation required)
 
 ---
 
@@ -56,7 +59,7 @@ npm run dev
 npm run build
 
 # Package into distributable app
-npm run dist
+npx electron-builder
 ```
 
 Build artifacts will be placed in `release/`.
@@ -86,6 +89,7 @@ electron/                 # Electron main process
   preload.ts              # Preload script
   file-manager.ts         # File I/O, project detection
   dev-server.ts           # Framework dev server launcher
+  workspace-manager.ts    # Temp workspace copy / cleanup
   react-parser.ts         # TSX/JSX parser
 src/
   App.tsx                 # Root React component
@@ -97,6 +101,8 @@ src/
     vue-codegen.ts        # Vue SFC generator
     react-codegen.ts      # React/TSX generator
     astro-codegen.ts      # Astro generator
+  editor/
+    PreviewPanel.tsx      # iframe preview + overlay interaction
   parsers/
     html-parser.ts        # HTML5 parser with VID injection
     vue-parser.ts         # Vue SFC parser
@@ -126,9 +132,6 @@ test-*-project/           # Sample projects for testing
 | React | `vite.config.ts` + `.tsx` files | TSX/JSX editing with VID injection |
 | Astro | `astro.config.mjs` | Frontmatter preserved, template editing |
 
-该作品为本人练习作品
-
-This project is the author's vibe coding practice work.
 ---
 
 ## License
