@@ -310,6 +310,19 @@ function getOverlayScript(isEditable: boolean) {
       // --- Keyboard nudge (arrow keys) ---
       document.addEventListener('keydown', function(e) {
         if (!isEditable || !selectedEl) return;
+        if (e.key === 'Delete') {
+          e.preventDefault();
+          const vidToDelete = dragVid;
+          if (selectedEl) {
+            clearOutline(selectedEl);
+            selectedEl.style.cursor = '';
+            selectedEl = null;
+          }
+          removeResizeHandles();
+          hoverEl = null;
+          send('delete-request', vidToDelete);
+          return;
+        }
         const step = e.shiftKey ? 10 : 1;
         let dx = 0, dy = 0;
         if (e.key === 'ArrowLeft') dx = -step;
